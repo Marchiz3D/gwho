@@ -1,11 +1,10 @@
-/*
-Copyright © 2026 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
 	"fmt"
 	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -22,7 +21,11 @@ verify your current profile and switch to the correct one.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Tip: Use 'gwho --help' to see all available commands.")
 		fmt.Println("---")
-		fmt.Println("[TODO: Display the currently active Git profile here]")
+
+		name := getGitConfig("user.name")
+		email := getGitConfig("user.email")
+
+		fmt.Printf("Current Git Profile:\nName: %s\nEmail: %s\n", name, email)
 	},
 }
 
@@ -33,6 +36,16 @@ func Execute() {
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func getGitConfig(key string) string {
+	cmd := exec.Command("git", "config", key)
+	outputBytes, err := cmd.Output()
+
+	if err != nil {
+		return fmt.Sprintf("Key '%s' not found", key)
+	}
+	return strings.TrimSpace(string(outputBytes))
 }
 
 func init() {
