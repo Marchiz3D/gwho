@@ -43,7 +43,7 @@ func getGitConfig(key string) string {
 	outputBytes, err := cmd.Output()
 
 	if err != nil {
-		return fmt.Sprintf("Key '%s' not found", key)
+		return fmt.Sprintf("%s Not Set", key)
 	}
 	return strings.TrimSpace(string(outputBytes))
 }
