@@ -8,8 +8,7 @@ import (
 )
 
 type Config struct {
-	Profiles   map[string]Profile `yaml:"profiles"`
-	Workspaces map[string]string  `yaml:"workspaces"`
+	Profiles map[string]Profile `yaml:"profiles"`
 }
 
 type Profile struct {
@@ -27,8 +26,7 @@ func LoadConfig() (Config, error) {
 	if err != nil {
 		if os.IsNotExist(err) {
 			return Config{
-				Profiles:   make(map[string]Profile),
-				Workspaces: make(map[string]string),
+				Profiles: make(map[string]Profile),
 			}, nil
 		}
 		return Config{}, err
@@ -42,9 +40,6 @@ func LoadConfig() (Config, error) {
 
 	if config.Profiles == nil {
 		config.Profiles = make(map[string]Profile)
-	}
-	if config.Workspaces == nil {
-		config.Workspaces = make(map[string]string)
 	}
 
 	return config, nil
