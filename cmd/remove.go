@@ -4,8 +4,7 @@ Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -17,30 +16,30 @@ var removeCmd = &cobra.Command{
 This action is permanent and cannot be undone.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			fmt.Println("Error: You must provide an alias (e.g., 'gwho remove work')")
+			color.Red("Error: You must provide an alias (e.g., 'gwho remove work')\n")
 			return
 		}
 		alias := args[0]
 
 		config, err := LoadConfig()
 		if err != nil {
-			fmt.Println("Error loading config:", err)
+			color.Red("Error loading config: %v\n", err)
 			return
 		}
 
 		if _, ok := config.Profiles[alias]; !ok {
-			fmt.Println("Error: Alias '" + alias + "' does not exist")
+			color.Red("Error: Alias '%s' does not exist\n", alias)
 			return
 		}
 
 		delete(config.Profiles, alias)
 
 		if err := SaveConfig(config); err != nil {
-			fmt.Println("Error saving config:", err)
+			color.Red("Error saving config: %v\n", err)
 			return
 		}
 
-		fmt.Printf("Profile '%s' removed successfully!\n", alias)
+		color.Green("> Profile '%s' removed successfully!\n", alias)
 	},
 }
 

@@ -5,10 +5,10 @@ package cmd
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -23,32 +23,32 @@ The CLI will display the current name and email, then prompt you for new values.
 To keep the existing value for a field, simply press Enter without typing anything.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			fmt.Println("Error: You must provide an alias (e.g., 'gwho edit work')")
+			color.Red("Error: You must provide an alias (e.g., 'gwho edit work')\n")
 			return
 		}
 		alias := args[0]
 
 		config, err := LoadConfig()
 		if err != nil {
-			fmt.Println("Error loading config:", err)
+			color.Red("Error loading config: %v\n", err)
 			return
 		}
 
 		if _, ok := config.Profiles[alias]; !ok {
-			fmt.Println("Error: Alias '" + alias + "' does not exist")
+			color.Red("Error: Alias '%s' does not exist\n", alias)
 			return
 		}
 
 		render := bufio.NewReader(os.Stdin)
-		fmt.Printf("Current Name: %s, Email: %s\n", config.Profiles[alias].Name, config.Profiles[alias].Email)
-		fmt.Printf("Enter Name: ")
+		color.Yellow("Current Name: %s, Email: %s\n", config.Profiles[alias].Name, config.Profiles[alias].Email)
+		color.Cyan("Enter Name: ")
 		name, _ := render.ReadString('\n')
 		name = strings.TrimSpace(name)
 		if name == "" {
 			name = config.Profiles[alias].Name
 		}
 
-		fmt.Printf("Enter Email: ")
+		color.Cyan("Enter Email: ")
 		email, _ := render.ReadString('\n')
 		email = strings.TrimSpace(email)
 		if email == "" {
@@ -56,12 +56,12 @@ To keep the existing value for a field, simply press Enter without typing anythi
 		}
 
 		if name == "" || email == "" {
-			fmt.Println("Error: Name and email cannot be empty")
+			color.Red("Error: Name and email cannot be empty\n")
 			return
 		}
 
 		if !strings.Contains(email, "@") {
-			fmt.Println("Error: Invalid email")
+			color.Red("Error: Invalid email\n")
 			return
 		}
 
@@ -71,12 +71,13 @@ To keep the existing value for a field, simply press Enter without typing anythi
 		}
 
 		if err := SaveConfig(config); err != nil {
-			fmt.Println("Error saving config:", err)
+			color.Red("Error saving config: %v\n", err)
 			return
 		}
 
-		fmt.Printf("Profile '%s' added successfully!\n", alias)
-		fmt.Printf("Name: %s\nEmail: %s\n", name, email)
+		color.Green("> Profile '%s' updated successfully!\n", alias)
+		cyanBold := color.New(color.FgCyan, color.Bold)
+		cyanBold.Printf("Name: %s\nEmail: %s\n", name, email)
 	},
 }
 

@@ -4,8 +4,7 @@ Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +17,7 @@ It reads the local Git configuration and matches it against your saved profiles.
 	Run: func(cmd *cobra.Command, args []string) {
 		config, err := LoadConfig()
 		if err != nil {
-			fmt.Println("Error loading config:", err)
+			color.Red("Error loading config: %v\n", err)
 			return
 		}
 
@@ -27,13 +26,14 @@ It reads the local Git configuration and matches it against your saved profiles.
 
 		for alias, profile := range config.Profiles {
 			if profile.Name == currentName && profile.Email == currentEmail {
-				fmt.Printf("You are currently using '%s' profile\n", alias)
-				fmt.Printf("Name: %s\nEmail: %s\n", profile.Name, profile.Email)
+				color.Green("> You are currently using '%s' profile\n", alias)
+				cyanBold := color.New(color.FgCyan, color.Bold)
+				cyanBold.Printf("Name: %s\nEmail: %s\n", profile.Name, profile.Email)
 				return
 			}
 		}
 
-		fmt.Println("You are currently not using any profile.\nUse 'gwho add <alias>' to add a profile or 'gwho list' to list all available profiles.")
+		color.Yellow("You are currently not using any profile.\nUse 'gwho add <alias>' to add a profile or 'gwho list' to list all available profiles.\n")
 	},
 }
 

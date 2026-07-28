@@ -5,7 +5,9 @@ package cmd
 
 import (
 	"fmt"
+	"sort"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -16,23 +18,37 @@ var listCmd = &cobra.Command{
 	Long: `Display a list of all Git profiles currently saved in your configuration.
 Each profile will show its alias, name, and email address.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("List of Git Profiles:")
 		config, err := LoadConfig()
 		if err != nil {
-			fmt.Println("Error loading config:", err)
+			color.Red("Error loading config: %v\n", err)
 			return
 		}
+
+		if len(config.Profiles) == 0 {
+			color.Yellow("No Git profiles found. Use 'gwho add <alias>' to create one.")
+			return
+		}
+
+		color.Cyan("\n📋 List of Git Profiles:")
+		color.Cyan("========================")
 
 		aliases := make([]string, 0, len(config.Profiles))
 		for alias := range config.Profiles {
 			aliases = append(aliases, alias)
 		}
 
+		sort.Strings(aliases)
+
 		for i, alias := range aliases {
 			profile := config.Profiles[alias]
-			fmt.Printf("[%d] %s - %s <%s>\n", i+1, alias, profile.Name, profile.Email)
-		}
 
+			idxStr := color.HiYellowString("[%d]", i+1)
+			aliasStr := color.HiGreenString(alias)
+			emailStr := color.HiBlackString("<%s>", profile.Email)
+
+			fmt.Printf("%s %s - %s %s\n", idxStr, aliasStr, profile.Name, emailStr)
+		}
+		fmt.Println()
 	},
 }
 
