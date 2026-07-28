@@ -23,9 +23,16 @@ Each profile will show its alias, name, and email address.`,
 			return
 		}
 
-		for alias, profile := range config.Profiles {
-			fmt.Printf("%s - %s <%s>\n", alias, profile.Name, profile.Email)
+		aliases := make([]string, 0, len(config.Profiles))
+		for alias := range config.Profiles {
+			aliases = append(aliases, alias)
 		}
+
+		for i, alias := range aliases {
+			profile := config.Profiles[alias]
+			fmt.Printf("[%d] %s - %s <%s>\n", i+1, alias, profile.Name, profile.Email)
+		}
+
 	},
 }
 

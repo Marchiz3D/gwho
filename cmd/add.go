@@ -68,7 +68,7 @@ These profiles can later be applied to any repository using 'gwho use <alias>'.`
 			return
 		}
 
-		fmt.Printf("Profile '%s' added successfully!\n", alias)
+		fmt.Printf("> Profile '%s' added successfully!\n", alias)
 		fmt.Printf("Name: %s\nEmail: %s\n", name, email)
 	},
 }
