@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Marchiz3D/gwho/config"
+	"github.com/Marchiz3D/gwho/service"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
@@ -28,31 +30,32 @@ To keep the existing value for a field, simply press Enter without typing anythi
 		}
 		alias := args[0]
 
-		config, err := LoadConfig()
+		profiles, err := service.GetAllProfiles()
 		if err != nil {
-			color.Red("Error loading config: %v\n", err)
+			color.Red("Error: %v\n", err)
 			return
 		}
 
-		if _, ok := config.Profiles[alias]; !ok {
+		oldProfile, ok := profiles[alias]
+		if !ok {
 			color.Red("Error: Alias '%s' does not exist\n", alias)
 			return
 		}
 
 		render := bufio.NewReader(os.Stdin)
-		color.Yellow("Current Name: %s, Email: %s\n", config.Profiles[alias].Name, config.Profiles[alias].Email)
+		color.Yellow("Current Name: %s, Email: %s\n", oldProfile.Name, oldProfile.Email)
 		color.Cyan("Enter Name: ")
 		name, _ := render.ReadString('\n')
 		name = strings.TrimSpace(name)
 		if name == "" {
-			name = config.Profiles[alias].Name
+			name = oldProfile.Name
 		}
 
 		color.Cyan("Enter Email: ")
 		email, _ := render.ReadString('\n')
 		email = strings.TrimSpace(email)
 		if email == "" {
-			email = config.Profiles[alias].Email
+			email = oldProfile.Email
 		}
 
 		if name == "" || email == "" {
@@ -65,13 +68,13 @@ To keep the existing value for a field, simply press Enter without typing anythi
 			return
 		}
 
-		config.Profiles[alias] = Profile{
+		profile := config.Profile{
 			Name:  name,
 			Email: email,
 		}
 
-		if err := SaveConfig(config); err != nil {
-			color.Red("Error saving config: %v\n", err)
+		if err := service.UpdateProfile(alias, profile); err != nil {
+			color.Red("Error: %v\n", err)
 			return
 		}
 
