@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Marchiz3D/gwho/config"
+	"github.com/Marchiz3D/gwho/service"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
@@ -47,24 +49,13 @@ These profiles can later be applied to any repository using 'gwho use <alias>'.`
 			return
 		}
 
-		config, err := LoadConfig()
-		if err != nil {
-			color.Red("Error loading config: %v\n", err)
-			return
-		}
-
-		if _, ok := config.Profiles[alias]; ok {
-			color.Red("Error: Alias '%s' already exists\n", alias)
-			return
-		}
-
-		config.Profiles[alias] = Profile{
+		profile := config.Profile{
 			Name:  name,
 			Email: email,
 		}
 
-		if err := SaveConfig(config); err != nil {
-			color.Red("Error saving config: %v\n", err)
+		if err := service.CreateProfile(alias, profile); err != nil {
+			color.Red("Error: %v\n", err)
 			return
 		}
 

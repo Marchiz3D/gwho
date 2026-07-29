@@ -1,4 +1,4 @@
-package cmd
+package config
 
 import (
 	"os"
@@ -14,6 +14,24 @@ type Config struct {
 type Profile struct {
 	Name  string `yaml:"name"`
 	Email string `yaml:"email"`
+}
+
+func (c *Config) SaveConfig() error {
+	configPath, err := getConfigFile()
+	if err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
+		return err
+	}
+
+	data, err := yaml.Marshal(c)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(configPath, data, 0644)
 }
 
 func LoadConfig() (Config, error) {
@@ -43,24 +61,6 @@ func LoadConfig() (Config, error) {
 	}
 
 	return config, nil
-}
-
-func SaveConfig(config Config) error {
-	configPath, err := getConfigFile()
-	if err != nil {
-		return err
-	}
-
-	if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
-		return err
-	}
-
-	data, err := yaml.Marshal(config)
-	if err != nil {
-		return err
-	}
-
-	return os.WriteFile(configPath, data, 0644)
 }
 
 func getConfigFile() (string, error) {

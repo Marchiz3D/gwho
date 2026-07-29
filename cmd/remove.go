@@ -4,6 +4,7 @@ Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"github.com/Marchiz3D/gwho/service"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
@@ -21,21 +22,8 @@ This action is permanent and cannot be undone.`,
 		}
 		alias := args[0]
 
-		config, err := LoadConfig()
-		if err != nil {
-			color.Red("Error loading config: %v\n", err)
-			return
-		}
-
-		if _, ok := config.Profiles[alias]; !ok {
-			color.Red("Error: Alias '%s' does not exist\n", alias)
-			return
-		}
-
-		delete(config.Profiles, alias)
-
-		if err := SaveConfig(config); err != nil {
-			color.Red("Error saving config: %v\n", err)
+		if err := service.DeleteProfile(alias); err != nil {
+			color.Red("Error: %v\n", err)
 			return
 		}
 

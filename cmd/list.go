@@ -4,9 +4,9 @@ Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"sort"
 
+	"github.com/Marchiz3D/gwho/service"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
@@ -18,37 +18,28 @@ var listCmd = &cobra.Command{
 	Long: `Display a list of all Git profiles currently saved in your configuration.
 Each profile will show its alias, name, and email address.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		config, err := LoadConfig()
+		res, err := service.GetAllProfiles()
 		if err != nil {
-			color.Red("Error loading config: %v\n", err)
-			return
-		}
-
-		if len(config.Profiles) == 0 {
-			color.Yellow("No Git profiles found. Use 'gwho add <alias>' to create one.")
+			color.Red("Error: %v\n", err)
 			return
 		}
 
 		color.Cyan("\n📋 List of Git Profiles:")
 		color.Cyan("========================")
 
-		aliases := make([]string, 0, len(config.Profiles))
-		for alias := range config.Profiles {
+		aliases := make([]string, 0, len(res))
+		for alias := range res {
 			aliases = append(aliases, alias)
 		}
 
 		sort.Strings(aliases)
 
 		for i, alias := range aliases {
-			profile := config.Profiles[alias]
-
-			idxStr := color.HiYellowString("[%d]", i+1)
-			aliasStr := color.HiGreenString(alias)
-			emailStr := color.HiBlackString("<%s>", profile.Email)
-
-			fmt.Printf("%s %s - %s %s\n", idxStr, aliasStr, profile.Name, emailStr)
+			profile := res[alias]
+			greenBold := color.New(color.FgGreen, color.Bold)
+			greenBold.Printf("[%d] %s\n", i+1, alias)
+			color.Magenta("Name: %s\nEmail: %s\n", profile.Name, profile.Email)
 		}
-		fmt.Println()
 	},
 }
 

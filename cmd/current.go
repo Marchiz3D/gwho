@@ -4,6 +4,7 @@ Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"github.com/Marchiz3D/gwho/service"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
@@ -15,17 +16,17 @@ var currentCmd = &cobra.Command{
 	Long: `Identify and display the Git profile currently active in this repository.
 It reads the local Git configuration and matches it against your saved profiles.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		config, err := LoadConfig()
+		profiles, err := service.GetAllProfiles()
 		if err != nil {
-			color.Red("Error loading config: %v\n", err)
+			color.Red("%v", err)
 			return
 		}
 
 		currentName := getGitConfig("user.name")
 		currentEmail := getGitConfig("user.email")
 
-		for alias, profile := range config.Profiles {
-			if profile.Name == currentName && profile.Email == currentEmail {
+		for alias, profile := range profiles {
+			if currentName == profile.Name && currentEmail == profile.Email {
 				color.Green("> You are currently using '%s' profile\n", alias)
 				cyanBold := color.New(color.FgCyan, color.Bold)
 				cyanBold.Printf("Name: %s\nEmail: %s\n", profile.Name, profile.Email)
