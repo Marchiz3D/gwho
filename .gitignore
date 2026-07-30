@@ -1,0 +1,7 @@
+# Node.js & NPM dependencies
+node_modules/
+
+# NPM Installer Download Artifacts
+*.tar.gz
+bin/gwho
+bin/gwho.exe
