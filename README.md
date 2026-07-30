@@ -28,13 +28,13 @@ _Ever accidentally committed to your company's repository using your anime-avata
 
 ## 📥 Installation
 
-Ensure you have [Go](https://golang.org/dl/) installed on your machine. Run the following command to install `gwho` globally:
+Ensure you have [Node.js](https://nodejs.org/) installed on your machine. Run the following command to install `gwho` globally:
 
 ```bash
-go install github.com/Marchiz3D/gwho@latest
+npm install -g gwho
 ```
 
-_Make sure your `$(go env GOPATH)/bin` is added to your system's `$PATH`._
+*(Alternatively, if you prefer the Go way: `go install github.com/Marchiz3D/gwho@latest`)*_
 
 ## 🎬 Quick Demo
 
