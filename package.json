@@ -2,6 +2,10 @@
   "name": "gwho",
   "version": "1.0.1",
   "description": "Seamless Git Profile Management CLI",
+  "files": [
+    "install.js",
+    "bin/run.js"
+  ],
   "bin": {
     "gwho": "bin/run.js"
   },
